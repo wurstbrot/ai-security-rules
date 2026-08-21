@@ -1,0 +1,32 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    ".ai-security-rules/architecture.md": "a1a6ef2f38ddb3afa80a0156c7c90e101baceb71ec40cc9dfcad0e2a2a1fad85",
+    ".ai-security-rules/authorization.md": "9b397007b6e4cbd7f7a47e434439c57c3b0ee56bf4e0964026049f7c54bfdcbe",
+    ".ai-security-rules/cryptography.md": "39371405bcabf57a63578b5af1de1b7151fc33e45aae97ac563621a47a1c5695",
+    ".ai-security-rules/frameworks/angular.md": "bb2399c367e5127b8677027035489af4260ccbcec45522851b751d4c4aeb1993",
+    ".ai-security-rules/frameworks/docker.md": "6a26281291109dc95f03a3be32814427154ec084eb46e0581fc4c43980bf7933",
+    ".ai-security-rules/frameworks/flask.md": "75db2533b0eb65034ffbc4102deaf3c7d1d66da470fd5af20ea519f5f0163e71",
+    ".ai-security-rules/frameworks/reactjs.md": "571fbf51d71e04bbd6f5db03c4ed79c7e1100397b8ae2e2220aa4d2c2aca8ddf",
+    ".ai-security-rules/frameworks/spring-boot.md": "23aa415caee5168f2ac91995420f970c166456eaeda17cd863a803f9364f669c",
+    ".ai-security-rules/frameworks/terraform.md": "3cfce19cf7f2c94252d0ac9e9010807b688b83345f720ff6702e1756d3c7731d",
+    ".ai-security-rules/general.md": "cb341f52e1c1a07d756da1762ee1ceea32bbe16c3eaf72f1086bab2fb3bd0f9e",
+    ".ai-security-rules/iac.md": "7c5d009fa329e3901979596c46a5396b4ba853fefce7e7526a06faad777f6bfc",
+    ".ai-security-rules/languages/java.md": "91f5512a29e70ec44ee262b6c3cc3d3d8f2ab271965b78cb7599e3b2d9254a05",
+    ".ai-security-rules/languages/javascript.md": "078f8e8bd6414800e8087f34af69b0ea87384a530f7dd06236e37ad55c0d9e19",
+    ".ai-security-rules/languages/python.md": "75dce3fa21014a7fbc23edd61f11e2edaf1a5010ef7fa7f49f232bcfd4655028",
+    ".ai-security-rules/opa.md": "d54f3e805b76f4737fef33fcda5006b123adee1810b2e05a5cfc5eb84435e807",
+    ".ai-security-rules/supply-chain.md": "71608ca696a9ea9bb633cf52e8bee3ffb07ff79ddd1ed66182a56f35d3e6466f",
+    ".ai-security-rules/threat-modeling.md": "191546f81086a789c7f596344942be1dbe89a8f4db69803d7f767d6390550fbe",
+    ".ai-security-rules/verification.md": "01534a4496438f28346a006d26d3557eb5536dc697765e3cae6a7a232904bab2",
+    ".ai-security-rules/web.md": "ff7479b5987fc3004d5a64f8dd05e2c3281137f87556c0853a15da7176383d8a",
+    ".claude/hooks/load-security-context.py": "a26ae9779df8e74d91d4ecaac85c90bd61e774836ee667b9a01f0b38285dec5e",
+    ".claude/hooks/security_artifacts.py": "97376a2f561210a2d451995327e297238a8e3d532f747c038365212e00ac5292",
+    ".claude/hooks/threat-model-gate.py": "ae6d0f7ea25f823f09e68e94f961dfe2120b479d937aa0194bd800c951a34e64",
+    ".claude/hooks/verify-security-drift.py": "be4c2776ef33813d6c6252642c4646c52bef9ace6b6a2c4da9d480d9338d46f4",
+    ".claude/settings.json": "902e486bfe6a3d6e03c3be82b3ff415888f447c74228f067a27253877b90970d",
+    "AGENTS.md": "6d59f1098b7909c19e3ba71e685d1d3322ee9e4f379c8af019048fdb71c67c44",
+    "CLAUDE.md": "8c13f234431e045c83864443f2103933b95624b6108fc03cc07eca7a674bccf2"
+  },
+  "version": 1
+}

@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_PROJECT_DIR=\"$CLAUDE_PROJECT_DIR/content\" python3 \"$CLAUDE_PROJECT_DIR\"/content/.claude/hooks/verify-security-drift.py"
+          }
+        ]
+      }
+    ]
+  }
+}
