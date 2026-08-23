@@ -1,7 +1,7 @@
 {
   "algorithm": "sha256",
   "files": {
-    ".ai-security-rules/architecture.md": "a1a6ef2f38ddb3afa80a0156c7c90e101baceb71ec40cc9dfcad0e2a2a1fad85",
+    ".ai-security-rules/architecture.md": "fe088c23f60decf405e6f8d410f1bbc1f16467989074a1e4d5c592820efd3cda",
     ".ai-security-rules/authorization.md": "9b397007b6e4cbd7f7a47e434439c57c3b0ee56bf4e0964026049f7c54bfdcbe",
     ".ai-security-rules/cryptography.md": "39371405bcabf57a63578b5af1de1b7151fc33e45aae97ac563621a47a1c5695",
     ".ai-security-rules/frameworks/angular.md": "bb2399c367e5127b8677027035489af4260ccbcec45522851b751d4c4aeb1993",

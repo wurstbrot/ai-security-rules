@@ -33,10 +33,15 @@
 - Document trust boundaries. Authenticate callers and authorize protected
   actions at each applicable boundary; explicitly model intentionally anonymous
   public access and machine/system subjects.
-- Protect network communication against interception and tampering. Use TLS for
-  traffic crossing hosts or trust boundaries. Same-host communication may use
-  Unix sockets, loopback plus operating-system isolation, or service-mesh
-  controls when justified by the threat model.
+- Protect network communication against interception and tampering. In the
+  standard cloud-native deployment, service-to-service traffic runs inside
+  the **Istio service mesh with strict mutual TLS** (workload-bound
+  identity, automatic certificate rotation, fail-closed validation - see
+  `.ai-security-rules/iac.md`); workloads that cannot join the mesh need a
+  documented equivalent TLS control. Traffic crossing hosts or trust
+  boundaries outside the mesh uses TLS. Same-host alternatives (Unix
+  sockets, loopback plus operating-system isolation) are exceptions that
+  require a documented justification in the threat model.
 - Secrets come from a secret manager or environment injection, never from
   files committed to the repository.
 - Least privilege for every component: minimal database grants, minimal cloud

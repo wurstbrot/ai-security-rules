@@ -11,16 +11,16 @@ model exists.
 
 ## Usage in a project
 
-The distributable ruleset lives in the `content/` folder. Copy the contents
-of `content/` (`AGENTS.md`, `CLAUDE.md`, `.ai-security-rules/`, `.claude/`,
+The distributable ruleset lives in the `rules/` folder. Copy the contents
+of `rules/` (`AGENTS.md`, `CLAUDE.md`, `.ai-security-rules/`, `.claude/`,
 `.security-rule-manifest.json`) into the project root (or add this
-repository as a git submodule and reference `content/` from the project's
+repository as a git submodule and reference `rules/` from the project's
 instruction file). Tools that read `CLAUDE.md`/`AGENTS.md` pick up the
 baseline automatically; the framework-specific and phase-specific rules are
 loaded on demand via the "Step Depending Security Rules" mapping, so the
 session context stays small.
 
-The repository root outside `content/` is the authoring workspace: its own
+The repository root outside `rules/` is the authoring workspace: its own
 `AGENTS.md` contains the rules for designing the rules, and the phase gate
 does not apply there - it is meant for real source-code generation in
 consuming projects.
@@ -30,7 +30,7 @@ read `AGENTS.md` natively; for the rest, reference it from the tool's
 instruction file (e.g. `.github/copilot-instructions.md`,
 `.cursor/rules/security.mdc`).
 
-Defense in depth: `content/.claude/settings.json` ships three local controls
+Defense in depth: `rules/.claude/settings.json` ships three local controls
 for Claude:
 
 - A `UserPromptSubmit` hook loads fixed phase rules and stack rules recognized
@@ -43,7 +43,7 @@ for Claude:
   missing, modified or unexpected protected files.
 
 The `.claude/` directory and `.security-rule-manifest.json` inside
-`content/` activate these controls when copied along with the rest of the
+`rules/` activate these controls when copied along with the rest of the
 folder.
 
 The local hook is deliberately **not described as a security boundary**. A

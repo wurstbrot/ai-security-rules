@@ -10,7 +10,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CHECKER = ROOT / "content" / ".claude" / "hooks" / "verify-security-drift.py"
+CHECKER = ROOT / "rules" / ".claude" / "hooks" / "verify-security-drift.py"
 
 
 class SecurityDriftTest(unittest.TestCase):

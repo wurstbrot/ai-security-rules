@@ -10,7 +10,7 @@ import unittest
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-HOOK = REPOSITORY_ROOT / "content" / ".claude" / "hooks" / "threat-model-gate.py"
+HOOK = REPOSITORY_ROOT / "rules" / ".claude" / "hooks" / "threat-model-gate.py"
 
 
 class ThreatModelGateTest(unittest.TestCase):
