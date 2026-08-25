@@ -73,9 +73,11 @@ architectures, image config/Dockerfile, signatures, size); for criteria you
 cannot verify from available data (e.g. malware scan, build
 reproducibility), state that explicitly and ask the user. Select images only
 after establishing that the publisher and distribution
-channel are trustworthy. Deployment references must resolve to a fixed
-content digest such as `sha256:...`; a movable tag, including `latest`, is not
-a sufficient identity. If a required image fails a must-have criterion,
+channel are trustworthy. Deployment references use a specific version tag
+(e.g. `1.2.3`) or a fixed content digest such as `sha256:...`; a digest
+SHOULD be preferred because tags are movable. Floating tags such as `latest`
+or `stable` are not a sufficient identity. If a required image fails a
+must-have criterion,
 document the deviation and prompt the user for a decision before using it;
 weaknesses in the comparison criteria only lower an image's ranking and are
 reported when presenting the chosen option.

@@ -26,8 +26,9 @@ files, in addition to the general IaC rules in `.ai-security-rules/iac.md`.
 
 ## Image content
 
-- Base images selected per `.ai-security-rules/supply-chain.md`, pinned by
-  immutable digest; prefer minimal/distroless.
+- Base images selected per `.ai-security-rules/supply-chain.md`, referenced
+  by a specific version tag or immutable digest (digest SHOULD be preferred;
+  never a floating tag such as `latest`); prefer minimal/distroless.
 - Multi-stage builds: build tools stay in the builder stage; the final stage
   contains only the runtime artifacts.
 - Never put secrets in layers, `ENV`, `ARG` or build context; use BuildKit

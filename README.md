@@ -147,6 +147,17 @@ subject to human review.
 - Per-file sources are listed in each rule file's `Sources` section, including
   the license and modification note for adapted third-party material.
 
+## Disclaimer
+
+This is an open-source project provided "as is", without warranty of any
+kind. The rules are guidance for AI coding assistants, not a guarantee of
+secure output: assistants may ignore, misinterpret or incompletely apply
+them. The authors and contributors are not liable for any damage arising
+from the use of this ruleset, including security vulnerabilities
+introduced into code that was generated or reviewed with these rules in
+place. Using this ruleset does not replace your own security reviews,
+testing and human judgment.
+
 ## License
 
 This repository is licensed under [Creative Commons Attribution 4.0
