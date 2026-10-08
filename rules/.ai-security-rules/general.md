@@ -60,9 +60,8 @@ may refine this baseline but must not silently weaken it.
   deployment risk.
 - Verify integrity and authenticity of important external scripts, actions,
   packages and images with publisher signatures, provenance or trusted hashes.
-  Container images use trusted sources and specific version tags or immutable
-  digests in deployments (digest preferred; no floating tags such as
-  `latest`).
+  Container images MUST come from trusted sources and MUST be pinned to a
+  specific version tag in deployments (no floating tags such as `latest`).
 - Run the dependency checks when integrating a new library - OSV-SCALIBR
   preferred, agent-performed allowed (see
   `.ai-security-rules/supply-chain.md`).

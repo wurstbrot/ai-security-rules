@@ -50,7 +50,7 @@ Helm charts, Dockerfiles or CI/CD workflows.
   authorization.
 - Dedicated ServiceAccounts; `automountServiceAccountToken: false` when the
   pod does not use the API.
-- Reference images by a specific version tag or digest (digest preferred);
+- Images MUST be referenced by a specific version tag, never a floating tag;
   separate namespaces per workload/environment.
 
 ### Rate limiting (Istio/Envoy)

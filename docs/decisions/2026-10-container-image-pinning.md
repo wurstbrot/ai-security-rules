@@ -1,29 +1,30 @@
-# Decision: container image references may use specific version tags
+# Decision: container images MUST be pinned to a specific version tag
 
-Date: 2026-10-08 (rule change in commit 33ce12b, manifest refreshed afterwards)
+Date: 2026-10-08
 
 ## Context
 
-Before 33ce12b the ruleset described image references as digest-pinned in
-four places (`general.md`, `iac.md`, `supply-chain.md`,
-`frameworks/docker.md`). None of them used the formal `MUST` keyword;
-`supply-chain.md` used the imperative "must resolve to a fixed content
-digest", the others stated digest pinning as the expected practice without
-a keyword. In practice this made generated Dockerfiles, Compose files and
-manifests hard to maintain: digests are opaque, interfere with version-bump
-tooling in some setups, and were frequently replaced by assistants with
-`latest` when they could not resolve a digest.
+Earlier wording (before commit 33ce12b) described image references as
+digest-pinned (`sha256:...`) without using the formal `MUST` keyword.
+Commit 33ce12b allowed version tags and kept digest as `SHOULD`. Digests
+are opaque, interfere with version-bump tooling and were frequently
+replaced by assistants with `latest` when they could not resolve one.
 
 ## Decision
 
-Image references use either a specific version tag (e.g. `1.2.3`) or an
-immutable digest. Digest pinning is now explicitly `SHOULD` (preferred).
-Floating tags such as `latest` or `stable` remain forbidden.
+Container image references MUST be pinned to a specific version tag
+(e.g. `1.2.3`). Floating tags such as `latest` or `stable` are forbidden.
+Digest pinning is no longer mentioned in the rules; projects may still use
+digests, but the ruleset does not require or prefer them.
+
+Affected files: `rules/.ai-security-rules/general.md`, `iac.md`,
+`supply-chain.md`, `frameworks/docker.md`.
 
 ## Risk accepted
 
 A version tag is movable: a registry can re-publish a tag with different
-content (accidental or malicious). The change is a deliberate relaxation of
-the previous wording and is recorded here so it is not a silent weakening.
-Projects with stricter supply-chain requirements should keep digest pinning
-as `MUST` in their own overrides.
+content (accidental or malicious). This is accepted by the maintainer in
+favour of maintainability; image trust is established through the
+publisher/channel evaluation in `supply-chain.md` and the signature
+verification rule in `general.md`. Projects with stricter supply-chain
+requirements should add digest pinning as `MUST` in their own overrides.
