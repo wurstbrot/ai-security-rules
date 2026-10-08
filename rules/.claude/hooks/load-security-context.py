@@ -54,6 +54,10 @@ def fail(reason: str) -> "NoReturn":
     raise SystemExit(2)
 
 
+def mentions(term: str, lowered: str) -> bool:
+    return re.search(rf"(?<!\w){re.escape(term)}(?!\w)", lowered) is not None
+
+
 def detect_phase(prompt: str) -> str | None:
     lowered = prompt.casefold()
     commands = {
@@ -65,14 +69,23 @@ def detect_phase(prompt: str) -> str | None:
     for command, phase in commands.items():
         if command in lowered:
             return phase
+    # Inflections are listed rather than matched by prefix. Whole-word matching
+    # is what keeps "preview" out of the review phase, and a prefix match would
+    # put it straight back.
     keywords = (
-        ("review", ("review", "verify", "verification")),
-        ("implement", ("implement", "implementation", "build", "change code")),
-        ("plan", ("plan", "planning")),
-        ("specify", ("specify", "specification")),
+        ("review", ("review", "reviews", "reviewing", "verify", "verifies",
+                    "verifying", "verification")),
+        ("implement", ("implement", "implements", "implementing",
+                       "implementation", "build", "builds", "building",
+                       "rebuild", "rebuilds", "rebuilding", "change code")),
+        ("plan", ("plan", "plans", "planning")),
+        ("specify", ("specify", "specifies", "specifying", "specification")),
     )
     for phase, terms in keywords:
-        if any(term in lowered for term in terms):
+        # Whole words only. As bare substrings "preview" matched "review" and
+        # "rebuild" matched "build", so the wrong ruleset loaded and the hook
+        # still exited 0 with valid output.
+        if any(mentions(term, lowered) for term in terms):
             return phase
     return None
 
@@ -81,10 +94,7 @@ def selected_rules(prompt: str, phase: str) -> list[str]:
     selected = list(PHASE_RULES[phase])
     lowered = prompt.casefold()
     for rule, terms in STACK_RULES.items():
-        if any(
-            re.search(rf"(?<!\w){re.escape(term)}(?!\w)", lowered)
-            for term in terms
-        ) and rule not in selected:
+        if any(mentions(term, lowered) for term in terms) and rule not in selected:
             selected.append(rule)
     return selected
 
