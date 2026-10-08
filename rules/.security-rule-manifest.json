@@ -20,7 +20,7 @@
     ".ai-security-rules/threat-modeling.md": "191546f81086a789c7f596344942be1dbe89a8f4db69803d7f767d6390550fbe",
     ".ai-security-rules/verification.md": "01534a4496438f28346a006d26d3557eb5536dc697765e3cae6a7a232904bab2",
     ".ai-security-rules/web.md": "ff7479b5987fc3004d5a64f8dd05e2c3281137f87556c0853a15da7176383d8a",
-    ".claude/hooks/load-security-context.py": "a26ae9779df8e74d91d4ecaac85c90bd61e774836ee667b9a01f0b38285dec5e",
+    ".claude/hooks/load-security-context.py": "8ad3b46b2460d1aa180e11432153ffb817c420c5ae2b92aed47f9e329cfaf5b9",
     ".claude/hooks/security_artifacts.py": "97376a2f561210a2d451995327e297238a8e3d532f747c038365212e00ac5292",
     ".claude/hooks/threat-model-gate.py": "ae6d0f7ea25f823f09e68e94f961dfe2120b479d937aa0194bd800c951a34e64",
     ".claude/hooks/verify-security-drift.py": "be4c2776ef33813d6c6252642c4646c52bef9ace6b6a2c4da9d480d9338d46f4",
