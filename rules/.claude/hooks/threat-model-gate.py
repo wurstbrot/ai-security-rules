@@ -11,9 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-from security_artifacts import ARTIFACT_TYPES, has_approval
-
-PLANNING_PREFIXES = tuple(f"{directory.as_posix()}/" for directory, _ in ARTIFACT_TYPES.values())
+from security_artifacts import ARTIFACT_TYPES, has_approval, search_roots
 
 
 def deny(reason: str) -> "NoReturn":
@@ -34,9 +32,23 @@ def relative_target(raw_path: str, root: Path) -> str:
         deny("target-outside-project")
 
 
-def is_documentation(rel: str) -> bool:
-    """Allow only the planning documents needed to satisfy this gate."""
-    return rel.endswith(".md") and rel.startswith(PLANNING_PREFIXES)
+def is_documentation(rel: str, root: Path) -> bool:
+    """Allow markdown writes inside a configured search root.
+
+    Planning documents must stay writable to create the artifacts this gate
+    requires. Their exact subdirectory is not fixed, so any ``.md`` file under a
+    configured search root is allowed; non-markdown source remains gated.
+    """
+    if not rel.endswith(".md"):
+        return False
+    target = (root / rel).resolve(strict=False)
+    for root_path in search_roots(root):
+        try:
+            target.relative_to(root_path)
+            return True
+        except ValueError:
+            continue
+    return False
 
 try:
     event = json.load(sys.stdin)
@@ -58,7 +70,7 @@ root = Path(root_value).resolve(strict=True)
 rel = relative_target(path, root)
 
 # Planning documents must remain writable to create the required model.
-if is_documentation(rel):
+if is_documentation(rel, root):
     raise SystemExit(0)
 
 for artifact_type in ARTIFACT_TYPES:

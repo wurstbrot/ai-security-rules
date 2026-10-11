@@ -58,13 +58,20 @@ an intentional fail-closed choice: use project-local scratch space or a
 separately controlled temporary-file mechanism instead of granting the hook a
 broad outside-root exemption.
 
-Specifications are stored in `docs/specifications/` and require
-`## Acceptance criteria`; plans are stored in `docs/plans/` and require
-`## Implementation steps`; threat models are stored in `docs/threat-models/`
-and require the sections documented in `threat-modeling.md`. All three use this
-machine-readable header:
+Each phase artifact declares its phase with a `Type:` marker
+(`specification`, `threat-model` or `plan`); specifications require
+`## Acceptance criteria`, plans require `## Implementation steps`, and threat
+models require the sections documented in `threat-modeling.md`. The artifact
+*location* is not fixed: the gate scans the configured search roots (default
+`docs/`, override with the `SECURITY_PHASE_SEARCH_ROOTS` environment variable,
+separated by the OS path separator) recursively, so layouts such as BMAD's work
+without renaming folders. For backward compatibility an artifact that carries no
+`Type:` marker is still classified by the legacy subdirectory it lives under
+(`specifications/`, `threat-models/`, `plans/`); an explicit marker always wins.
+All three use this machine-readable header:
 
 ```markdown
+Type: specification
 Status: approved
 Approved-by: reviewer@example.org
 Approved-at: 2026-08-21

@@ -23,10 +23,16 @@ class ThreatModelGateTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary_directory.cleanup()
 
-    def run_gate(self, event: str | dict[str, object]) -> subprocess.CompletedProcess[str]:
+    def run_gate(
+        self,
+        event: str | dict[str, object],
+        search_roots: str | None = None,
+    ) -> subprocess.CompletedProcess[str]:
         payload = event if isinstance(event, str) else json.dumps(event)
         environment = os.environ.copy()
         environment["CLAUDE_PROJECT_DIR"] = str(self.project)
+        if search_roots is not None:
+            environment["SECURITY_PHASE_SEARCH_ROOTS"] = search_roots
         return subprocess.run(
             [sys.executable, str(HOOK)],
             input=payload,
@@ -71,6 +77,18 @@ class ThreatModelGateTest(unittest.TestCase):
         self.write_artifact("specifications", self.valid_specification(pattern))
         self.write_model(self.valid_model(pattern))
         self.write_artifact("plans", self.valid_plan(pattern))
+
+    def write_marker_artifact(self, folder: str, marker: str, body: str) -> None:
+        directory = self.project / folder
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / f"{marker.replace('-', '_')}.md").write_text(
+            f"Type: {marker}\n{body}", encoding="utf-8"
+        )
+
+    def write_marker_artifacts(self, folder: str, pattern: str) -> None:
+        self.write_marker_artifact(folder, "specification", self.valid_specification(pattern))
+        self.write_marker_artifact(folder, "threat-model", self.valid_model(pattern))
+        self.write_marker_artifact(folder, "plan", self.valid_plan(pattern))
 
     def event(self, path: str, field: str = "file_path") -> dict[str, object]:
         return {"tool_input": {field: path}}
@@ -169,6 +187,46 @@ class ThreatModelGateTest(unittest.TestCase):
         for directory in ("specifications", "plans"):
             target = self.project / "docs" / directory / "new.md"
             self.assertEqual(self.run_gate(self.event(str(target))).returncode, 0)
+
+    def test_marker_artifacts_in_arbitrary_folder_authorize_code(self) -> None:
+        self.write_marker_artifacts("docs/bmad/features", "src/**")
+        target = self.project / "src" / "app.py"
+        self.assertEqual(self.run_gate(self.event(str(target))).returncode, 0)
+
+    def test_unknown_type_marker_is_not_classified(self) -> None:
+        self.write_marker_artifact("docs/bmad", "specification", self.valid_specification("src/**"))
+        self.write_marker_artifact("docs/bmad", "plan", self.valid_plan("src/**"))
+        self.write_marker_artifact("docs/bmad", "bogus", self.valid_model("src/**"))
+        gate_run = self.run_gate(self.event(str(self.project / "src" / "app.py")))
+        self.assertEqual(gate_run.returncode, 2)
+        self.assertIn("no-approved-threat-model-for-target", gate_run.stderr)
+
+    def test_explicit_marker_overrides_legacy_directory(self) -> None:
+        # A specification placed in the legacy `plans/` directory still counts as
+        # a specification because its Type: marker is authoritative.
+        self.write_marker_artifact("docs/plans", "specification", self.valid_specification("src/**"))
+        self.write_marker_artifact("docs/a", "threat-model", self.valid_model("src/**"))
+        self.write_marker_artifact("docs/b", "plan", self.valid_plan("src/**"))
+        target = self.project / "src" / "app.py"
+        self.assertEqual(self.run_gate(self.event(str(target))).returncode, 0)
+
+    def test_custom_search_root_is_scanned(self) -> None:
+        self.write_marker_artifacts("requirements", "src/**")
+        target = self.project / "src" / "app.py"
+        self.assertEqual(
+            self.run_gate(self.event(str(target)), search_roots="requirements").returncode,
+            0,
+        )
+
+    def test_artifacts_outside_search_roots_are_ignored(self) -> None:
+        self.write_marker_artifacts("requirements", "src/**")
+        gate_run = self.run_gate(self.event(str(self.project / "src" / "app.py")))
+        self.assertEqual(gate_run.returncode, 2)
+        self.assertIn("no-approved-specification-for-target", gate_run.stderr)
+
+    def test_allows_document_creation_in_arbitrary_search_root_folder(self) -> None:
+        target = self.project / "docs" / "bmad" / "features" / "login.md"
+        self.assertEqual(self.run_gate(self.event(str(target))).returncode, 0)
 
 
 if __name__ == "__main__":
