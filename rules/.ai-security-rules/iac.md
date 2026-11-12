@@ -48,6 +48,19 @@ Helm charts, Dockerfiles or CI/CD workflows.
   document their equivalent TLS control and approved risk decision. A mesh does
   not replace `NetworkPolicy`, application-layer authentication, or OPA
   authorization.
+- Service-to-service access is deny by default inside the mesh as well:
+  a namespace- or mesh-wide `AuthorizationPolicy` that denies everything,
+  plus explicit allow rules per calling workload identity (SPIFFE ID /
+  ServiceAccount). Every workload has its own identity; identities are
+  never shared between workloads.
+- No bypass of the authentication proxy or mesh: application ports are
+  reachable only from the ingress gateway, oauth2-proxy and the sidecar
+  (`NetworkPolicy` and mesh `AuthorizationPolicy` restricted to those
+  identities). Never expose the application port directly via `NodePort`,
+  `LoadBalancer`, `hostPort` or an additional unauthenticated listener.
+  The application still rejects requests that lack the proxy's validated
+  identity (`.ai-security-rules/web.md`, "Authentication flows") instead of
+  trusting the network alone.
 - Dedicated ServiceAccounts; `automountServiceAccountToken: false` when the
   pod does not use the API.
 - Images MUST be referenced by a specific version tag, never a floating tag;
@@ -101,6 +114,7 @@ in `.ai-security-rules/web.md` (API security, anti-automation):
 
 # Sources
 - Istio documentation, "Enabling Rate Limits using Envoy": https://istio.io/latest/docs/tasks/policy-enforcement/rate-limit/
+- Istio documentation, Security concepts (peer authentication, authorization policy): https://istio.io/latest/docs/concepts/security/
 - DSOMM (activities "Infrastructure as Code", "Least-privilege access baseline", Agentic AI Guidance/Verification): https://dsomm.owasp.org/
 - OWASP Cheat Sheet Series (Docker Security, Kubernetes Security, Infrastructure as Code Security, CI/CD Security, Key Management, Logging): https://cheatsheetseries.owasp.org/
 - OpenSSF Security-Focused Guide for AI Code Assistant Instructions: https://best.openssf.org/Security-Focused-Guide-for-AI-Code-Assistant-Instructions.html

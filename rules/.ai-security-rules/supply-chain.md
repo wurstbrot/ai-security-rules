@@ -21,6 +21,30 @@ selects a container base image.
 - Prefer dependencies already used in the organization/project; pin exact
   versions - no version ranges - and commit resolved lockfiles; keep the
   SBOM (CycloneDX/SPDX) up to date.
+- State the purpose of every new dependency and why existing project or
+  platform functionality does not suffice when presenting the change. Do not
+  add a dependency where the standard library or a few lines of
+  non-security-sensitive first-party code are safer and sufficient; but
+  never reimplement security-critical functionality (cryptography,
+  authentication, authorization, protocol parsing, output encoding, HTML
+  sanitization) just to avoid a dependency.
+- Do not introduce deprecated, abandoned, end-of-life or pre-release
+  packages into production code. Expect evidence of maintenance within the
+  last twelve months (a release, a security fix or substantive maintainer
+  activity); a mature project with rarer releases needs a documented
+  exception showing that security reports are still handled. The Scorecard
+  `Maintained` check above is one input for this, not a substitute:
+  registry deprecation flags, end-of-life status of the chosen major
+  version and pre-release status are not covered by Scorecard and must be
+  checked separately.
+- Use the newest stable release of an actively supported major version that
+  has passed the release cooldown below, unless a documented compatibility
+  constraint requires another supported major version.
+- Assess the complete transitive dependency graph, not only the direct
+  package. A small direct dependency that drags in a large, opaque,
+  unmaintained or unvetted transitive tree is rejected in favour of a
+  narrower alternative with a smaller tree, clear provenance and an active
+  security response process.
 - Dependency checks happen **at integration time** - in the same step in
   which a new or updated library is added, before the change is presented.
   **OSV-SCALIBR is the preferred tool but optional**: an agent may answer

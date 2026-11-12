@@ -188,9 +188,50 @@ centrally in middleware (not per endpoint):
   (ROPC) flow - they leak tokens and credentials. If existing code uses
   them, flag it for retirement instead of extending it.
 - Register redirect URIs as exact-match allowlists; never wildcards.
-- Use the framework's/IdP's evaluated OIDC libraries; validate issuer,
-  audience, signature and expiry of every token (claims entering
-  authorization decisions: see `.ai-security-rules/opa.md`).
+- Use the framework's/IdP's evaluated OIDC/JWT libraries; never hand-write
+  token parsing or validation. Every token is checked for: signature
+  against the issuer's published keys, an explicit algorithm allowlist
+  (reject `none` and any algorithm the issuer does not use), issuer,
+  audience, expiry/not-before and token type (`typ`, e.g. `at+jwt` for
+  access tokens). Claims entering authorization decisions: see
+  `.ai-security-rules/opa.md`.
+- Token roles are not interchangeable: an ID token proves authentication to
+  the client that requested it and MUST NOT be accepted as an API access
+  token. APIs accept only access tokens whose audience names them.
+- Access tokens are short-lived and carry the least privilege the call
+  needs (narrow `scope`, exact `audience`). For downstream or delegated
+  calls obtain a downscoped token (token exchange) instead of forwarding a
+  broader token.
+- Where a client holds tokens itself (native/mobile apps, service clients,
+  SPAs not behind oauth2-proxy), bind the token to the client so a stolen
+  token cannot be replayed from elsewhere: DPoP (RFC 9449) or mTLS-bound
+  tokens (RFC 8705), whichever the IdP supports. A plain bearer token in
+  such a client is a documented risk decision, not the default.
+- Refresh tokens: never reachable from browser JavaScript (confidential
+  backend or the `HttpOnly` cookie exception in "Browser storage" only);
+  rotate on every use with reuse detection that revokes the whole token
+  family; revoke on logout and on credential change.
+
+## Authentication strength (IdP configuration)
+
+Credentials live in the central IdP; the following are configuration and
+enrollment obligations there, not application code. Verify them when the
+deployment or IdP integration is generated or changed:
+
+- Prefer phishing-resistant authentication: passkeys (WebAuthn/FIDO2) with
+  user verification on the authenticator (PIN or biometric) as the primary
+  factor. Passwords and one-time codes via SMS or email are fallbacks
+  permitted only by the protection requirement; MFA is required for
+  privileged roles and sensitive actions.
+- Enrolling a new credential requires an authenticated session with a
+  recent re-authentication; notify the account owner on every enrollment
+  and removal.
+- Account recovery is an authentication path and MUST NOT be weaker than
+  the factor it replaces: identity verification proportionate to the
+  protection requirement, single-use and short-lived recovery tokens, no
+  silent fallback to a weaker factor, anti-automation controls (below) and
+  user notification. After recovery the user enrolls a new credential; the
+  lost one stays revoked.
 
 ## Session lifecycle
 
@@ -210,6 +251,19 @@ them directly:
 - Locally generated session IDs: at least 120 bit from a CSPRNG
   (`cryptography.md`), never transmitted in URLs; cookie flags per
   "Conditional headers".
+- Every state-changing request authenticated by a cookie needs CSRF
+  protection through the framework mechanism (synchronizer or
+  double-submit token) in addition to `SameSite`; fetch metadata is
+  defense-in-depth only (see above).
+- Sessions and tokens MUST be revocable server-side at any time (admin
+  action, credential change, suspected compromise), not only on logout;
+  keep lifetimes short enough that revocation latency is acceptable for the
+  protection requirement.
+- Where the client platform supports it, bind the session to the device
+  (Device Bound Session Credentials: the browser holds a non-exportable key
+  and proves possession when the session is refreshed) so a copied session
+  cookie is useless on another device. SHOULD; record the browser support
+  assumption per deployment.
 
 ## Anti-automation and account enumeration
 
@@ -275,7 +329,14 @@ Protocol versions, ciphers and key lengths come from BSI TR-02102
 - W3C Fetch Metadata Request Headers: https://www.w3.org/TR/fetch-metadata/
 - web.dev "Protect your resources from web attacks with Fetch Metadata": https://web.dev/articles/fetch-metadata
 - DSOMM (Identity and Access Management, activity "Use correct OAuth2/OIDC authorization flows"): https://dsomm.owasp.org/
+- IETF RFC 9700 Best Current Practice for OAuth 2.0 Security: https://www.rfc-editor.org/rfc/rfc9700
+- IETF RFC 9449 OAuth 2.0 Demonstrating Proof of Possession (DPoP): https://www.rfc-editor.org/rfc/rfc9449
+- IETF RFC 8705 OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens: https://www.rfc-editor.org/rfc/rfc8705
+- IETF RFC 8725 JSON Web Token Best Current Practices; RFC 9068 JWT Profile for OAuth 2.0 Access Tokens: https://www.rfc-editor.org/rfc/rfc8725 , https://www.rfc-editor.org/rfc/rfc9068
+- W3C Web Authentication Level 3 (passkeys): https://www.w3.org/TR/webauthn-3/
+- NIST SP 800-63B (Authentication and Authenticator Management, incl. phishing resistance and account recovery): https://pages.nist.gov/800-63-4/sp800-63b.html
+- W3C WebAppSec Device Bound Session Credentials (draft): https://w3c.github.io/webappsec-dbsc/
 - TSS-WEB - Technical Security Standard for Web Applications (CC BY 4.0, Secodis; requirements adapted and modified from controls B.3 Fileuploads/Downloads, B.5 Registration & Authentication, B.6 User Passwords, B.7 Session Management, B.10 Data Security, B.12 API Security, B.14 HTTP Header Security): https://tss-web.secodis.com/
 - OWASP Secure Headers Project: https://owasp.org/www-project-secure-headers/
-- OWASP HTML5 Security Cheat Sheet (Local Storage), Session Management and Unvalidated Redirects Cheat Sheets: https://cheatsheetseries.owasp.org/
+- OWASP HTML5 Security Cheat Sheet (Local Storage), Session Management, Authentication, Forgot Password, CSRF Prevention and Unvalidated Redirects Cheat Sheets: https://cheatsheetseries.owasp.org/
 - oauth2-proxy documentation: https://oauth2-proxy.github.io/oauth2-proxy/

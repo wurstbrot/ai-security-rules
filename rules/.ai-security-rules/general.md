@@ -79,6 +79,34 @@ may refine this baseline but must not silently weaken it.
 - Do not weaken deserialization, XML entity, type-safety, browser or transport
   protections merely to make a feature work.
 
+## Open decisions and unknown facts
+
+- Security parameters come from these rules, the approved specification, the
+  threat model and the plan - nowhere else. When none of them settles a value
+  (allowed CORS origins, data- or log-retention periods, numeric rate limits,
+  the secret-management or scanning product, a cloud service, a regulatory
+  regime), do not fill the gap with a plausible-looking default. Stop and ask
+  the user, as `.ai-security-rules/authorization.md` requires for missing
+  policy attributes.
+- When asking is not possible in the current execution mode (subagent,
+  unattended run), label the gap in the artifact instead: `TO BE DECIDED`
+  for a pending decision, `UNKNOWN` for a fact no input provides,
+  `ASSUMPTION` for a provisional default you chose yourself. State what the
+  fallback is and present the result as not production-ready. A label never
+  turns into a confirmed requirement on its own; a human resolves it before
+  the change is approved.
+- Labels never replace a hard stop-and-ask gate. Where a rule forbids
+  generating code until the user has decided - an undefined authorization
+  policy (`authorization.md`), local credential storage, persisting
+  sensitive data in the browser (`web.md`), a missing approved threat model
+  (`threat-modeling.md`) - a subagent or unattended run does not generate
+  that code. It records the open question and returns it to the main agent
+  or the human; the gated code is written only after the decision exists.
+- Never derive a compliance obligation (GDPR, PCI DSS, HIPAA, ...) from the
+  mere presence of personal, payment or health data. Jurisdiction and regime
+  are a user decision recorded in the threat model
+  (`.ai-security-rules/threat-modeling.md`).
+
 ## Verification and review
 
 - Add negative tests for security requirements and controls proportionate to

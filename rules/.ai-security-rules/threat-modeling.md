@@ -41,7 +41,11 @@ and the strictness of controls (encryption, logging, caching):
 - Accessibility (internal only vs. internet-facing)
 - Regulatory requirements (e.g. GDPR, PCI-DSS, HIPAA)
 Record the classification in the threat model notes; if it is unclear, ask
-the user.
+the user. Regulatory requirements are a human decision: the presence of
+personal, payment or health data does not by itself establish a regime, and
+an unknown jurisdiction is recorded as `TO BE DECIDED` with an open question,
+not resolved by assumption (see `general.md`, "Open decisions and unknown
+facts").
 
 **Step 1 - Conduct Threat Modeling.** Answer these four standard threat-modeling questions:
 
